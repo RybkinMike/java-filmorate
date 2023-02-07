@@ -14,20 +14,22 @@ import java.util.Collection;
 @RequestMapping("/films")
 public class FilmController extends Controller<Film> {
 
-    static final LocalDate LUMIERE = LocalDate.of(1895, 12, 28);
 
+    @Override
     @GetMapping
     public Collection<Film> findAll() {
         log.info("Запрос на все фильмы");
         return super.findAll();
     }
 
+    @Override
     @PostMapping
     public Film create(@RequestBody @Valid @NotBlank Film film) throws ValidationException {
         log.info("Добавлен фильм {}", film);
         return super.create(film);
     }
 
+    @Override
     @PutMapping
     public Film update(@RequestBody @Valid @NotBlank Film film) throws ValidationException {
         log.info("Данные фильма {} обновлены", film);
@@ -44,7 +46,7 @@ public class FilmController extends Controller<Film> {
             log.warn("Указано слишком длинное описание");
             throw new ValidationException("Максимальная длина описания — 200 символов");
         }
-        if(film.getReleaseDate().isBefore(LUMIERE)) {
+        if(film.getReleaseDate().isBefore(Film.FIRST_FILM)) {
             log.warn("Указана неверная дата релиза");
             throw new ValidationException("Прости, но братья Люмьер были первыми");
         }
@@ -54,6 +56,7 @@ public class FilmController extends Controller<Film> {
         }
     }
 
+    @Override
     void validateForPost (Film film) throws ValidationException {
         validate(film);
         for (Film filmInFilms : items.values()) {

@@ -15,18 +15,21 @@ import java.util.Collection;
 @RequestMapping("/users")
 public class UserController extends Controller<User> {
 
+    @Override
     @GetMapping
     public Collection<User> findAll() {
         log.info("Запрос на всех пользователей");
         return super.findAll();
     }
 
+    @Override
     @PostMapping
     public User create(@RequestBody @Valid @Email @NotBlank User user) throws ValidationException {
         log.info("Добавлен пользователь {}", user);
         return super.create(user);
     }
 
+    @Override
     @PutMapping
     public User update(@RequestBody @Valid @Email @NotBlank User user) throws ValidationException {
         log.info("Данные пользователя {} обновлены", user);
@@ -53,6 +56,7 @@ public class UserController extends Controller<User> {
         }
     }
 
+    @Override
     void validateForPost (User user) throws ValidationException {
         validate(user);
         for (User userInUsers: items.values()) {

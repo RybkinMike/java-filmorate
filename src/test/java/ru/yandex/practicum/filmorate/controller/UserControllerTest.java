@@ -49,7 +49,7 @@ class UserControllerTest {
         Collection<User> users2 = controller.findAll();
         System.out.println(users2);
         assertEquals(1, users2.size(), "Неверное количество фильмов.");
-        assertTrue(users2.contains(userUpdate), "Фильм1 не обновился.");
+        assertTrue(users2.contains(userUpdate), "Пользователь1 не обновился.");
     }
 
     @Test

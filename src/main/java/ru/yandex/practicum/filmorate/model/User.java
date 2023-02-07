@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import lombok.Data;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
 
 @Data
 public class User extends Item {
@@ -12,6 +13,7 @@ public class User extends Item {
     @NotBlank (message = "Логин не может быть пустым")
     private final String login;
     private String name;
+    @Past (message = "Приходи когда родишься")
     private LocalDate birthday;
 
     public User(String email, String login, String name, LocalDate birthday) {
