@@ -6,14 +6,12 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDate;
 import java.util.Collection;
 
 @RestController
 @Slf4j
 @RequestMapping("/films")
 public class FilmController extends Controller<Film> {
-
 
     @Override
     @GetMapping
