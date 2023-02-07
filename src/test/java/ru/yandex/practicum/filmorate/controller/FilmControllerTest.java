@@ -48,7 +48,6 @@ class FilmControllerTest {
         filmUpdate.setId(1);
         controller.update(filmUpdate);
         Collection<Film> films2 = controller.findAll();
-
         assertEquals(1, films2.size(), "Неверное количество фильмов.");
         assertTrue(films2.contains(filmUpdate), "Фильм1 не обновился.");
     }

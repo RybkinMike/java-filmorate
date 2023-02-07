@@ -36,26 +36,26 @@ public class FilmController extends Controller<Film> {
 
     @Override
     void validate(Film film) throws ValidationException {
-        if(film.getName() == null || film.getName().isBlank()) {
+        if (film.getName() == null || film.getName().isBlank()) {
             log.warn("Указано пустое название");
             throw new ValidationException("Название фильма не может быть пустым.");
         }
-        if(film.getDescription().length() > 200) {
+        if (film.getDescription().length() > 200) {
             log.warn("Указано слишком длинное описание");
             throw new ValidationException("Максимальная длина описания — 200 символов");
         }
-        if(film.getReleaseDate().isBefore(Film.FIRST_FILM)) {
+        if (film.getReleaseDate().isBefore(Film.FIRST_FILM)) {
             log.warn("Указана неверная дата релиза");
             throw new ValidationException("Прости, но братья Люмьер были первыми");
         }
-        if(film.getDuration() < 1) {
+        if (film.getDuration() < 1) {
             log.warn("Указана неверная продолжительность");
             throw new ValidationException("Ну хоть одну секундочку должен фильм идти");
         }
     }
 
     @Override
-    void validateForPost (Film film) throws ValidationException {
+    void validateForPost(Film film) throws ValidationException {
         validate(film);
         for (Film filmInFilms : items.values()) {
             if (filmInFilms.getName().equals(film.getName())) {

@@ -19,5 +19,4 @@ public class Film extends Item {
     private LocalDate releaseDate;
     @Min(1)
     private Long duration;
-
 }

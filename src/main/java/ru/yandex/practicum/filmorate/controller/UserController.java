@@ -38,26 +38,26 @@ public class UserController extends Controller<User> {
 
     @Override
     void validate(User user) throws ValidationException {
-        if(user.getEmail() == null || user.getEmail().isBlank()) {
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
             log.warn("Указан пустой Email");
             throw new ValidationException("Адрес электронной почты не может быть пустым.");
         }
-        if(!user.getEmail().contains("@") || !user.getEmail().contains(".")) {
+        if (!user.getEmail().contains("@") || !user.getEmail().contains(".")) {
             log.warn("Указан неверный Email");
             throw new ValidationException("Адрес электронной почты имеет неправильный формат.");
         }
-        if(user.getLogin() == null || user.getLogin().isBlank()) {
+        if (user.getLogin() == null || user.getLogin().isBlank()) {
             log.warn("Указан пустой логин");
             throw new ValidationException("Логин не может быть пустым.");
         }
-        if(user.getBirthday().isAfter(LocalDate.now())) {
+        if (user.getBirthday().isAfter(LocalDate.now())) {
             log.warn("Указана неверная дата рождения");
             throw new ValidationException("Приходи, после того как родишься.");
         }
     }
 
     @Override
-    void validateForPost (User user) throws ValidationException {
+    void validateForPost(User user) throws ValidationException {
         validate(user);
         for (User userInUsers: items.values()) {
             if (userInUsers.getEmail().equals(user.getEmail())) {

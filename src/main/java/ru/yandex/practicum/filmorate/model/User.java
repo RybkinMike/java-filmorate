@@ -8,12 +8,12 @@ import javax.validation.constraints.Past;
 
 @Data
 public class User extends Item {
-    @Email (message = "email введен не верно")
+    @Email(message = "email введен не верно")
     private final String email;
-    @NotBlank (message = "Логин не может быть пустым")
+    @NotBlank(message = "Логин не может быть пустым")
     private final String login;
     private String name;
-    @Past (message = "Приходи когда родишься")
+    @Past(message = "Приходи когда родишься")
     private LocalDate birthday;
 
     public User(String email, String login, String name, LocalDate birthday) {
@@ -22,7 +22,8 @@ public class User extends Item {
         if (name == null || name.isBlank()) {
             this.name = login;
         } else {
-            this.name = name;}
+            this.name = name;
+        }
         this.birthday = birthday;
     }
 }
