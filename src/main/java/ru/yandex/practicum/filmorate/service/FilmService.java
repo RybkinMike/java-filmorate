@@ -45,13 +45,10 @@ public class FilmService extends AbstractService<Film> {
     @Override
     public void validateForPost(Film film) throws ValidationException, ItemAlreadyExistException {
         validate(film);
-        if (storage != null) {
-            for (Film filmInFilms : storage.findAll()) {
-                if (filmInFilms.getName().equals(film.getName())) {
-                    log.warn("Попытка внести уже зарегестрированный фильм");
-                    throw new ItemAlreadyExistException("Фильм с названием " + film.getName() + " уже зарегистрирован.");
-                }
-            }
+        Optional<Film> filmOpt = findByName(film.getName());
+        if (!filmOpt.isEmpty()) {
+            log.warn("Попытка внести уже зарегестрированный фильм");
+            throw new ItemAlreadyExistException("Фильм с названием " + film.getName() + " уже зарегистрирован.");
         }
     }
 
@@ -103,4 +100,22 @@ public class FilmService extends AbstractService<Film> {
                 collect(Collectors.toList());
     }
     public static final Comparator<Film> COMPARATOR = Comparator.comparingLong(Film::getRate).reversed();
+
+    public Optional<Film> findByName (String filmName) {
+        Film film = null;
+        if (storage != null) {
+            for (Film filmInFilms : storage.findAll()) {
+                if (filmInFilms.getName().equals(filmName)) {
+                    film = filmInFilms;
+                }
+                else {
+                    return Optional.empty();
+                }
+            }
+        }
+        else {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(film);
+    }
 }

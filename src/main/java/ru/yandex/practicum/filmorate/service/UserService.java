@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ItemAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 import java.time.LocalDate;
@@ -44,11 +45,10 @@ public class UserService extends AbstractService<User> {
     @Override
     public void validateForPost(User user) throws ItemAlreadyExistException, ValidationException {
         validate(user);
-        for (User userInUsers : storage.findAll()) {
-            if (userInUsers.getEmail().equals(user.getEmail())) {
-                log.warn("Попытка внести уже зарегистрираванного пользователя");
-                throw new ItemAlreadyExistException("Пользователь с электронной почтой " + user.getEmail() + " уже зарегистрирован.");
-            }
+        Optional<User> userOpt = findByEmail(user.getEmail());
+        if (!userOpt.isEmpty()) {
+            log.warn("Попытка внести уже зарегестрированного пользователя");
+            throw new ItemAlreadyExistException("Пользователь с электронной почтой " + user.getEmail() + " уже зарегистрирован.");
         }
     }
 
@@ -132,4 +132,21 @@ public class UserService extends AbstractService<User> {
     }
     public static final Comparator<User> COMPARATOR = Comparator.comparingLong(User::getId);
 
+    public Optional<User> findByEmail (String userEmail) {
+        User user = null;
+        if (storage != null) {
+            for (User userInUsers : storage.findAll()) {
+                if (userInUsers.getEmail().equals(userEmail)) {
+                    user = userInUsers;
+                }
+                else {
+                    return Optional.empty();
+                }
+            }
+        }
+        else {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(user);
+    }
 }

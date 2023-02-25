@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,25 +35,25 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film create(@RequestBody @Valid @NotBlank Film film) throws ValidationException {
+    public Film create(@RequestBody @Valid Film film) throws ValidationException {
         log.info("Добавлен фильм {}.", film);
         return filmService.create(film);
     }
 
     @PutMapping
-    public Film update(@RequestBody @Valid @NotBlank Film film) throws ValidationException {
+    public Film update(@RequestBody @Valid Film film) throws ValidationException {
         log.info("Данные фильма {} обновлены", film);
         return filmService.update(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public void addLike(@Valid @NotBlank @PathVariable Long id, @PathVariable Long userId) throws ValidationException {
+    public void addLike(@Valid @PathVariable Long id, @PathVariable Long userId) throws ValidationException {
         log.info("Пользователь с ID {} поставил лайк фильму с ID {}", userId, id);
         filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void removeLike(@Valid @NotBlank @PathVariable Long id, @PathVariable Long userId) throws ValidationException {
+    public void removeLike(@Valid @PathVariable Long id, @PathVariable Long userId) throws ValidationException {
         log.info("Пользователь с ID {} удалил лайк фильму с ID {}", userId, id);
         filmService.removeLike(id, userId);
     }

@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 
 @Slf4j
@@ -36,13 +35,13 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody @Valid @Email @NotBlank User user) throws ValidationException {
+    public User create(@RequestBody @Valid @Email User user) throws ValidationException {
         log.info("Добавлен пользователь {}.", user);
         return userService.create(user);
     }
 
     @PutMapping
-    public User update(@RequestBody @Valid @Email @NotBlank User user) throws ValidationException {
+    public User update(@RequestBody @Valid @Email User user) throws ValidationException {
         log.info("Данные пользователя {} обновлены", user);
         return userService.update(user);
     }
