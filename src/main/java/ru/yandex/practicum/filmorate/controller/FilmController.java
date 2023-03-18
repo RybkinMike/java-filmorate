@@ -36,25 +36,25 @@ public class FilmController {
 
     @PostMapping
     public Film create(@RequestBody @Valid Film film) throws ValidationException {
-        log.info("Добавлен фильм {}.", film);
+        log.info("Запрос на доавление фильма {}.", film);
         return filmService.create(film);
     }
 
     @PutMapping
     public Film update(@RequestBody @Valid Film film) throws ValidationException {
-        log.info("Данные фильма {} обновлены", film);
+        log.info("Запрос на обновление фильма {}", film);
         return filmService.update(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@Valid @PathVariable Long id, @PathVariable Long userId) throws ValidationException {
-        log.info("Пользователь с ID {} поставил лайк фильму с ID {}", userId, id);
+        log.info("Пользователь с ID {} хочет поставить лайк фильму с ID {}", userId, id);
         filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void removeLike(@Valid @PathVariable Long id, @PathVariable Long userId) throws ValidationException {
-        log.info("Пользователь с ID {} удалил лайк фильму с ID {}", userId, id);
+        log.info("Пользователь с ID {} хочет удалить лайк фильму с ID {}", userId, id);
         filmService.removeLike(id, userId);
     }
 
@@ -63,5 +63,4 @@ public class FilmController {
         log.info("Запрос на {} самых популярных фильмов", count);
         return filmService.getPopular(count);
     }
-
 }

@@ -3,26 +3,26 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FilmDbStorage;
+import ru.yandex.practicum.filmorate.dao.UserDbStorage;
 import ru.yandex.practicum.filmorate.exception.ItemAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.Storage;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class FilmService extends AbstractService<Film> {
-    Storage<User> userStorage;
+public class FilmService  {
+    UserDbStorage userStorage;
+    FilmDbStorage storage;
+
     @Autowired
-    public FilmService(Storage<Film> storage, Storage<User> userStorage) {
+    public FilmService(FilmDbStorage storage, UserDbStorage userStorage) {
         this.userStorage = userStorage;
         this.storage = storage;
     }
 
-    @Override
     public void validate(Film film) throws ValidationException {
         if (film.getName() == null || film.getName().isBlank()) {
             log.warn("Указано пустое название");
@@ -42,80 +42,63 @@ public class FilmService extends AbstractService<Film> {
         }
     }
 
-    @Override
     public void validateForPost(Film film) throws ValidationException, ItemAlreadyExistException {
         validate(film);
-        Optional<Film> filmOpt = findByName(film.getName());
-        if (!filmOpt.isEmpty()) {
-            log.warn("Попытка внести уже зарегестрированный фильм");
-            throw new ItemAlreadyExistException("Фильм с названием " + film.getName() + " уже зарегистрирован.");
-        }
     }
 
-    @Override
+
     public Long validateForPut(Film film) throws ValidationException, NotFoundException {
         validate(film);
-        if (storage.findById(film.getId()) == null) {
+        log.info("Фильм {} бновлен.", film.getId());
+        if (storage.findById(film.getId()).isEmpty()) {
             log.warn("Попытка отредактировать незарегестрированный фильм");
             throw new NotFoundException("Фильм с ID " + film.getId() + " не найден.");
         }
+        log.info("Фильм {} бновлен.", film.getName());
         return film.getId();
     }
 
-    public void addLike (Long filmId, Long userId) throws ValidationException {
-        Film film = storage.findById(filmId);
-        User user = userStorage.findById(userId);
-        if (!user.isLike()) {
-            Set<Long> tempLikes = new HashSet<>();
-            if (film.getLikes() != null) {
-                tempLikes = film.getLikes();
-            }
-            tempLikes.add(user.getId());
-            film.setLikes(tempLikes);
-            user.setLike(true);
+    public Collection<Film> findAll() {
+        return storage.findAll();
+    }
+    public Film findById(Long id) {
+        if (storage.findById(id).isEmpty()) {
+            throw new NotFoundException("Фильм с таким ID не найден.");
         }
         else {
-            throw new ValidationException("Данный пользователь уже поставил лайк");
+            return storage.findById(id).get();
         }
+    }
+
+    public Film findByName(String name) {
+        return findById(storage.findIdByName(name).get());
+    }
+
+    public Film create(Film film) throws ValidationException {
+        validateForPost(film);
+        return storage.create(film);
+    }
+
+    public Film update(Film film) throws ValidationException {
+        validateForPut(film);
+        return storage.update(film);
+    }
+
+    public void addLike (Long filmId, Long userId) throws ValidationException {
+        storage.addLike(filmId, userId);
     }
 
     public void removeLike (Long filmId, Long userId) throws ValidationException {
-        Film film = storage.findById(filmId);
-        User user = userStorage.findById(userId);
-        if (user.isLike() && film.getLikes().contains(user.getId())) {
-            Set<Long> tempLikes = film.getLikes();
-            tempLikes.remove(user.getId());
-            film.setLikes(tempLikes);
-            user.setLike(false);
-        }
-        else {
-            throw new ValidationException("Данный пользователь еще ничего не лайкнул");
-        }
+        storage.removeLike(userId);
     }
 
     public List<Film> getPopular (Integer count){
-        return storage.findAll().stream()
-                .sorted(COMPARATOR).
-                limit(count).
-                collect(Collectors.toList());
+        return storage.getPopular(count);
     }
-    public static final Comparator<Film> COMPARATOR = Comparator.comparingLong(Film::getRate).reversed();
 
-    public Optional<Film> findByName (String filmName) {
-        Film film = null;
-        if (storage != null) {
-            for (Film filmInFilms : storage.findAll()) {
-                if (filmInFilms.getName().equals(filmName)) {
-                    film = filmInFilms;
-                }
-                else {
-                    return Optional.empty();
-                }
-            }
-        }
-        else {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(film);
+
+    public Optional<Long> findIdByName (String filmName) {
+        return storage.findIdByName(filmName);
     }
+
 }

@@ -29,31 +29,32 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User findUser(@PathVariable("id") Long id){
+    public User findUser(@PathVariable("id") Long id) throws ValidationException {
         log.info("Запрошен пользователь {}", id);
         return userService.findById(id);
     }
 
     @PostMapping
     public User create(@RequestBody @Valid @Email User user) throws ValidationException {
-        log.info("Добавлен пользователь {}.", user);
+        log.info("Запрос на добавление пользователя {}.", user);
         return userService.create(user);
     }
 
     @PutMapping
     public User update(@RequestBody @Valid @Email User user) throws ValidationException {
-        log.info("Данные пользователя {} обновлены", user);
+        log.info("Запрос на обновление данных пользователя {}", user);
         return userService.update(user);
     }
+
     @PutMapping("/{id}/friends/{friendId}")
-    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) throws ValidationException {
-        log.info("Пользователь с ID {} добавил в друзья пользователя с ID {}", id, friendId);
+    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        log.info("Пользователь с ID {} хочет добавить в друзья пользователя с ID {}", id, friendId);
         userService.addFriend(id, friendId);
     }
 
     @DeleteMapping ("/{id}/friends/{friendId}")
     public void removeFriend(@PathVariable Long id, @PathVariable Long friendId) throws ValidationException {
-        log.info("Пользователь с ID {} удалил из друзей пользователя с ID {}", id, friendId);
+        log.info("Пользователь с ID {} хочет удалилить из друзей пользователя с ID {}", id, friendId);
         userService.removeFriend(id, friendId);
     }
 
