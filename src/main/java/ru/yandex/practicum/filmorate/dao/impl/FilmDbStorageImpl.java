@@ -212,7 +212,7 @@ public class FilmDbStorageImpl implements FilmDbStorage {
     @Override
     public List<Film> getPopular(Integer count){
         List<Film> popularFilms = new ArrayList<>();
-        String sql = "SELECT * FROM film AS f LEFT OUTER JOIN likes AS l ON f.id = l.film_id " +
+        String sql = "SELECT id, COUNT(user_id) FROM film AS f LEFT OUTER JOIN likes AS l ON f.id = l.film_id " +
                 "GROUP BY f.id ORDER BY COUNT(user_id) DESC LIMIT ?";
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sql, count);
         while (filmRows.next()) {

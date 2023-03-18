@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -20,7 +21,46 @@ import static org.junit.jupiter.api.Assertions.*;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class FilmControllerTest {
     private final FilmController controller;
+    @Autowired private JdbcTemplate jdbcTemplate;
+    @BeforeEach
+    void beforeEach (){
+        String sqlQuery1 = "INSERT INTO \"user\" (email, login, nickname, birthday) " +
+                "VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sqlQuery1,
+                "User1@mail.ru",
+                "LogUser1",
+                "User#1",
+                LocalDate.of(2020,12,31));
+        String sqlQuery2 = "INSERT INTO \"user\" (email, login, nickname, birthday) " +
+                "VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sqlQuery2,
+                "User2@mail.ru",
+                "LogUser2",
+                "User#2",
+                LocalDate.of(2021,12,31));
+        String sqlQuery3 = "INSERT INTO \"user\" (email, login, nickname, birthday) " +
+                "VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sqlQuery3,
+                "User3@mail.ru",
+                "LogUser3",
+                "User#3",
+                LocalDate.of(2022,12,31));
 
+        String sqlQuery4 = "INSERT INTO film (film_name, description, releasedate, duration) " +
+                "VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sqlQuery4,
+                "FilmName1",
+                "FilmDesc1",
+                LocalDate.of(2020,12,31),
+                100L);
+        String sqlQuery5 = "INSERT INTO film (film_name, description, releasedate, duration) " +
+                "VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sqlQuery5,
+                "FilmName2",
+                "FilmDesc2",
+                LocalDate.of(2021,12,31),
+                200L);
+    }
 
     @Test
     void createAndFindAllTest() throws ValidationException {
@@ -142,7 +182,16 @@ class FilmControllerTest {
 
     @Test
     void getPopularTest() throws ValidationException {
+        controller.removeLike(1L, 1L);
+        controller.removeLike(2L, 1L);
+        controller.removeLike(3L, 1L);
+        controller.removeLike(4L, 1L);
+        controller.removeLike(1L, 2L);
+        controller.removeLike(2L, 2L);
+        controller.removeLike(3L, 2L);
+        controller.removeLike(4L, 2L);
         controller.addLike(1L, 1L);
+        controller.addLike(1L, 2L);
         controller.addLike(2L, 3L);
         List<Film> popular = controller.getPopular(2);
         assertNotNull(popular, "Популярные ильмы пустой");

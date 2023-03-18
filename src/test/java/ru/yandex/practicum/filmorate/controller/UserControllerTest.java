@@ -1,22 +1,16 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import ru.yandex.practicum.filmorate.dao.UserDbStorage;
-import ru.yandex.practicum.filmorate.dao.impl.UserDbStorageImpl;
 import ru.yandex.practicum.filmorate.exception.ItemAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.Storage;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import java.time.LocalDate;
 import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,9 +18,34 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class UserControllerTest {
-   //private final UserDbStorage userStorage;
+
+    @Autowired private JdbcTemplate jdbcTemplate;
     private final UserController controller;
 
+    @BeforeEach
+    void beforeEach (){
+        String sqlQuery1 = "INSERT INTO \"user\" (email, login, nickname, birthday) " +
+                "VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sqlQuery1,
+                "User1@mail.ru",
+                "LogUser1",
+                "User#1",
+                LocalDate.of(2020,12,31));
+        String sqlQuery2 = "INSERT INTO \"user\" (email, login, nickname, birthday) " +
+                "VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sqlQuery2,
+                "User2@mail.ru",
+                "LogUser2",
+                "User#2",
+                LocalDate.of(2021,12,31));
+        String sqlQuery3 = "INSERT INTO \"user\" (email, login, nickname, birthday) " +
+                "VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sqlQuery3,
+                "User3@mail.ru",
+                "LogUser3",
+                "User#3",
+                LocalDate.of(2022,12,31));
+    }
     @Test
     void createAndFindAllTest() throws ValidationException {
         Collection<User> users = controller.findAll();
