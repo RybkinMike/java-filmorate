@@ -91,17 +91,10 @@ public class UserService {
             storage.addFriend(friendId, userId);
             log.info("Пользователи с ID {} и {} теперь друзья", userId, friendId);
         }
-       /* else {
-            storage.addFollower (userId, friendId);
-            log.info("Пользователи с ID {} подписался на пользователя с ID {}", userId, friendId);
-        }*/
     }
 
     public void removeFriend (Long userId, Long friendId) throws ValidationException {
-        if (storage.removeFriend(userId, friendId)) {
-            //storage.addFollower (friendId, userId);
-        }
-        else {
+        if (!storage.removeFriend(userId, friendId)) {
             throw new ValidationException("Пользователи не были друзьями.");
         }
     }

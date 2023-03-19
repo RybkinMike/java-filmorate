@@ -59,7 +59,6 @@ public class UserDbStorageImpl implements UserDbStorage {
 
     @Override
     public User create(final User user) {
-        System.out.println(1);
         String sqlQuery = "INSERT INTO \"user\" (email, login, nickname, birthday) " +
                 "VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(sqlQuery,
